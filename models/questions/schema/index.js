@@ -1,33 +1,23 @@
-'use strict';
 
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
 
-const DEFINITION_OBJECT = {
-    id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-    },
+module.exports = new mongoose.Schema({
     survey_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'surveys',
-            key: 'id',
-        },
-        onDelete: 'cascade',
-        onUpdate: 'cascade'
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'surveys'
     },
     text: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
     }
-}
-
-const CONFIGURATION_OBJECT = {};
-
-module.exports = Object.freeze({
-    definitionObject: DEFINITION_OBJECT,
-    configurationObject: CONFIGURATION_OBJECT
-})
+});

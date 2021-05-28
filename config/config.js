@@ -1,24 +1,12 @@
 
 module.exports = {
   development: {
-    username: "root",
-    password: "",
-    database: "comment_loop",
-    host: "localhost",
-    dialect: "mysql"
+    host: 'mongodb://localhost:27017/comment_loop'
   },
   test: {
-    username: "root",
-    password: "",
-    database: "comment_loop_test",
-    host: "localhost",
-    dialect: "mysql"
+    host: process.env.DB_HOST_TEST
   },
   production: {
-    username: "root",
-    password: null,
-    database: "database_production",
-    host: "127.0.0.1",
-    dialect: "mysql"
+    host: process.env.DB_HOST_PROD
   }
 }
