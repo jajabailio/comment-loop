@@ -20,15 +20,5 @@ module.exports = new mongoose.Schema({
     sub_question_id: {
         type: SchemaTypes.ObjectId,
         ref: 'questions'
-    },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        required: true,
-        default: Date.now
     }
-})
+}, { timestamps: true })

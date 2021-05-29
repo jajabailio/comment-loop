@@ -17,4 +17,4 @@ module.exports = new mongoose.Schema({
     contact_number: {
         type: String
     }
-})
+}, { timestamps: true })
