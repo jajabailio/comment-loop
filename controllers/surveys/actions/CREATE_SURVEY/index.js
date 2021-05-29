@@ -8,7 +8,7 @@ exports.createSurvey = async (req, res) => {
     try {
 
         const newSurvey = await Survey.create({ isActive: true });
-        const newQuestion = await Question.create({ survey_id: newSurvey._id, text: question.text });
+        const newQuestion = await Question.create({ survey_id: newSurvey._id, text: question.text, isMain: true });
         
         const mapOptions = options.map(opt => ({ ...opt, question_id: newQuestion._id}));
         const newOptions = await Option.insertMany(mapOptions);

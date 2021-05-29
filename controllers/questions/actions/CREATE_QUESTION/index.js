@@ -1,14 +1,17 @@
 
 const ObjectId = require('mongoose').Types.ObjectId;
-const { Question, Option } = require('../../../../models');
+const { Question, Option, Survey } = require('../../../../models');
 
 exports.createQuestion = async (req, res) => {
 
-    const { options, option_id } = req.body;
+    const { options, option_id, survey_id } = req.body;
 
     if(!ObjectId.isValid(option_id)) return res.status(400).json('Option is not valid');
     
     try {
+
+        const findSurvey = await Survey.findById(survey_id);
+        if(!findSurvey) return res.status(400).json('Survey not found');
 
         const findOption = await Option.findById(option_id);
         if(!findOption) return res.status(400).json('Option not found');
