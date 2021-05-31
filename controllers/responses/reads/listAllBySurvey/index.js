@@ -1,29 +1,46 @@
 
 const ObjectId = require('mongoose').Types.ObjectId;
-const { Survey, Option, Response, Question } = require('../../../../models');
+const { Survey } = require('../../../../models');
 
 exports.surveyResponses = async (req, res) => {
 
     try {
 
-        const fetchSurvey = await Question.aggregate([
-            { "$match": { survey_id: ObjectId(req.params.survey_id) }},
-            { "$project": { "createdAt": 0, "updatedAt": 0 }},
+        const fetchSurvey = await Survey.aggregate([
+            { "$match": { _id: ObjectId(req.params.survey_id) }},
             {
                 "$lookup": {
-                    "from": "option",
-                    "localField": "data._id",
-                    "foreignField": "questions_id",
-                    "as": "options"
+                    "from": "questions",
+                    "localField": "_id",
+                    "foreignField": "survey_id",
+                    "as": "questions"
                 }
             },
-            // { "$unwind": "$options" },
+            { "$unwind": { "path": "$questions", "preserveNullAndEmptyArrays": true} },
             {
-                "$group": {
-                    "_id": "$options._id",
-                    "count": { "$sum" :1 }
+                "$lookup": {
+                    "from": "options",
+                    "localField": "questions._id",
+                    "foreignField": "question_id",
+                    "as": "questions.options"
                 }
-            }
+            },
+            { "$unwind": { "path": "$questions.options", "preserveNullAndEmptyArrays": true} },
+            {
+                "$lookup": {
+                    "from": "answers",
+                    "localField": "questions.options._id",
+                    "foreignField": "option_id",
+                    "as": "questions.options.answers"
+                },
+            },
+            { "$project": {
+                "createdAt": 0, "updatedAt": 0, "isActive": 0,
+                "questions.createdAt": 0, "questions.updatedAt": 0,
+                "questions.options.createdAt": 0, "questions.options.updatedAt": 0,
+                "questions.options.answers.createdAt": 0, "questions.options.answers.updatedAt": 0, 
+                
+            }},
         ]);
 
         res.json(fetchSurvey);

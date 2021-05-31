@@ -1,6 +1,6 @@
 
 const _ = require('lodash')
-const { Response, Survey } = require('../../../../models');
+const { Response, Survey, Answer } = require('../../../../models');
 
 exports.createNewResponse = async (req, res) => {
 
@@ -15,11 +15,20 @@ exports.createNewResponse = async (req, res) => {
 
         const createBody = Object.assign(
             _.pick(req.body, ['email', 'contact_number']),
-            { questions: responses, survey_id: req.params.survey_id }
-        )
+            { survey_id: req.params.survey_id }
+        );
 
-        const createResponses = await Response.insertMany(createBody);
-        res.json(createResponses);
+        const createResponse = await Response.create(createBody);
+
+        const mapAnswers = responses.map((response) => ({
+            ...response,
+            response_id: createResponse._id
+        }));
+
+        const createAnswers = await Answer.insertMany(mapAnswers);
+
+        createResponse._doc.answers = createAnswers
+        res.json(createResponse);
 
     } catch(err) {
         console.log(err);

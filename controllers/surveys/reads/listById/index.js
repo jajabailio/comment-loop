@@ -23,6 +23,8 @@ exports.fetchById = async (req, res) => {
                 const survey = result[0];
                 const question = result[1];
 
+                if(!survey) return res.status(404).json('Survey not found');
+
                 Option.find({ question_id: question._id }).sort('order_number')
                     .then((options) => {
                         question._doc.option = options;

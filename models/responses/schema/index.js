@@ -7,10 +7,10 @@ module.exports = new mongoose.Schema({
         ref: 'surveys',
         required: true
     },
-    questions: {
-        type: Object,
-        required: true
-    },
+    // questions: {
+    //     type: Object,
+    //     required: true
+    // },
     email: {
         type: String
     },
