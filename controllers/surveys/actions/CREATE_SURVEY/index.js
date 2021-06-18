@@ -1,24 +1,21 @@
 
-const { Survey, Question, Option } = require('../../../../models');
+const { Survey } = require('../../../../models');
 
 exports.createSurvey = async (req, res) => {
 
-    const { question, options } = req.body;
+    const { options, text } = req.body.main_question;
 
     try {
 
-        const newSurvey = await Survey.create({ isActive: true });
-        const newQuestion = await Question.create({ survey_id: newSurvey._id, text: question.text, isMain: true });
-        
-        const mapOptions = options.map(opt => ({ ...opt, question_id: newQuestion._id}));
-        const newOptions = await Option.insertMany(mapOptions);
+        const { error } = Survey.createValidateBody(Object.assign({}, { ...req.body, options, text }));
+        if (error) return res.status(400).json(error.details[0].message);
 
-        newQuestion._doc.options = newOptions;          //* add options prop to data values of question
-        newSurvey._doc.question = newQuestion;          //* add question prop to the survey
+        const validate_opts = Survey.validateOptions(options);
 
+        const newSurvey = await Survey.create(Object.assign(req.body, { options: validate_opts }));
         res.json(newSurvey)
 
-    } catch(err) {
+    } catch (err) {
         console.error(err);
         res.status(500).json('Internal Server Error');
     }
