@@ -18,13 +18,24 @@ classMethods.validateOptions = function (options) {
     let newOptions = [];
     let orderNumber = 1;
     options.forEach(option => {
+        if (option.text == '' || !option.text)
+            throw new Error('There are empty options in a question. Make sure all options are valid').toString();
+
         const id = ObjectId();
         option.order_number = orderNumber++;
         option._id = id;
         newOptions.push(option);
+
         if (option.question) {
-            let questionOptions = validateQuestions(option.question);
-            option.question.options = questionOptions;
+            if (option.question.text == '' || !option.question.text)
+                throw new Error('There are empty questions in the survey. Make sure all questions are valid').toString();
+
+            try {
+                let questionOptions = validateQuestions(option.question);
+                option.question.options = questionOptions;
+            } catch (err) {
+                throw new Error(err).toString();
+            }
         }
     });
 
@@ -35,12 +46,22 @@ function validateQuestions(question) {
     let newOptions = [];
     let orderNumber = 1;
     question.options.forEach(option => {
+        if (option.text == '' || !option.text)
+            throw new Error('There are empty options in a question. Make sure all optinos are valid')
         const id = ObjectId();
         option.order_number = orderNumber++;
         option._id = id;
         if (option.question) {
-            let formatOptions = validateQuestions(option.question);
-            option.question.option = formatOptions;
+
+            if (option.question.text == '' || !option.question.text)
+                throw new Error('There are empty questions in the survey. Make sure all questions are valid');
+
+            try {
+                let formatOptions = validateQuestions(option.question);
+                option.question.options = formatOptions;
+            } catch (err) {
+                throw new Error(err);
+            }
         }
         newOptions.push(option);
     });
