@@ -5,7 +5,20 @@ const ObjectId = require('mongoose').Types.ObjectId;
 exports.fetchById = async (req, res) => {
     try {
 
-        const fetchResponse = await Response.aggregate([
+        const fetchResponse = await Response.findById(req.params.id);
+        if (!fetchResponse) return res.status(404).json("Response was not found");
+
+        res.json(fetchResponse);
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json('Internal Server Error');
+    }
+}
+
+
+/*
+const fetchResponse = await Response.aggregate([
             { "$match": { _id: ObjectId(req.params.id) }},
             {
                 "$lookup": {
@@ -72,14 +85,7 @@ exports.fetchById = async (req, res) => {
                 "questions.createdAt": 0, "questions.updatedAt": 0,
                 "questions.options.createdAt": 0, "questions.options.updatedAt": 0,
                 "questions.options.answers.createdAt": 0, "questions.options.answers.updatedAt": 0
-                
+
             }},
         ])
-
-        res.json(fetchResponse);
-
-    } catch(err) {
-        console.log(err);
-        return res.status(500).json('Internal Server Error');
-    }
-}
+*/

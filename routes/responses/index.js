@@ -13,7 +13,7 @@ const controllers = {
     }
 }
 
-router.post('/:survey_id', controllers.responses.actions.CREATE_RESPONSE);
+router.post('/', controllers.responses.actions.CREATE_RESPONSE);
 
 router.get('/:id', controllers.responses.reads.listById);
 

@@ -1,36 +1,20 @@
 
-const _ = require('lodash')
-const { Response, Survey, Answer } = require('../../../../models');
+const { Response } = require('../../../../models');
 
 exports.createNewResponse = async (req, res) => {
 
-    const { responses } = req.body;
-
     try {
 
-        const findSurvey = await Survey.findById(req.params.survey_id);
-        if(!findSurvey) return res.status(400).json('Survey is not found');
+        const { error } = Response.createValidate(req.body);
+        if (error) return res.status(400).json(error.details[0].message);
 
-        if(responses.length < 1) return res.status(400).json('No question responses found');
+        const validateQuestions = Response.validateQuestions(req.body.survey);
+        req.body.survey = validateQuestions;
 
-        const createBody = Object.assign(
-            _.pick(req.body, ['email', 'contact_number']),
-            { survey_id: req.params.survey_id }
-        );
+        const response = await Response.create(req.body);
+        res.json(response);
 
-        const createResponse = await Response.create(createBody);
-
-        const mapAnswers = responses.map((response) => ({
-            ...response,
-            response_id: createResponse._id
-        }));
-
-        const createAnswers = await Answer.insertMany(mapAnswers);
-
-        createResponse._doc.answers = createAnswers
-        res.json(createResponse);
-
-    } catch(err) {
+    } catch (err) {
         console.log(err);
         return res.status(500).json('Internal Server Error');
     }

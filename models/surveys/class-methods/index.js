@@ -17,13 +17,21 @@ classMethods.createValidateBody = function (body) {
 classMethods.validateOptions = function (options) {
     let newOptions = [];
     let orderNumber = 1;
+
+    if (options.length < 1) throw new Error('Survey requires at least one or two options');
+
     options.forEach(option => {
         if (option.text == '' || !option.text)
             throw new Error('There are empty options in a question. Make sure all options are valid').toString();
 
-        const id = ObjectId();
+        if (!option._id) {
+            const id = ObjectId();
+            option._id = id;
+        } else {
+            option._id = ObjectId(option._id);
+        }
+
         option.order_number = orderNumber++;
-        option._id = id;
         newOptions.push(option);
 
         if (option.question) {
@@ -45,14 +53,23 @@ classMethods.validateOptions = function (options) {
 function validateQuestions(question) {
     let newOptions = [];
     let orderNumber = 1;
+
+    if (question.options.length < 1) throw new Error(`Question "${question.text}" requires at least one or two options`)
+
     question.options.forEach(option => {
         if (option.text == '' || !option.text)
-            throw new Error('There are empty options in a question. Make sure all optinos are valid')
-        const id = ObjectId();
-        option.order_number = orderNumber++;
-        option._id = id;
-        if (option.question) {
+            throw new Error('There are empty options in a question. Make sure all optinos are valid');
 
+        if (!option._id) {
+            const id = ObjectId();
+            option._id = id;
+        } else {
+            option._id = ObjectId(option._id);
+        }
+
+        option.order_number = orderNumber++;
+
+        if (option.question) {
             if (option.question.text == '' || !option.question.text)
                 throw new Error('There are empty questions in the survey. Make sure all questions are valid');
 

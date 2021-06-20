@@ -1,4 +1,23 @@
-{
+/*
+
+Guide To The Sample Data
+
+SURVEY
+1. Copy the value of "createSurveyJSON" in line 20 to test creating a Survey
+
+RESPONSE
+2. Copy the value of "createResponseJSON" in line 458 to test creating a new Response. (NOTE: The _ids are from a different instance as per the one you newly created. This is so that you don't have to change the values)
+
+FETCH RESPONSE by Id
+3. "/api/responses/60ce8697539b27ab5dd92477"
+
+FETCH RESPONSE by Survey Id
+4. "/api/surveys/responses/60cd961ed1f2a9a53aab8bc5"
+
+
+*/
+
+var createSurveyJSON = {
     "name": "Template 1",
     "main_question": {
         "text": "Leave a comment about...",
@@ -200,7 +219,7 @@
                                 "options": [
                                     {
                                         "text": "The staff greeted with manners",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -217,7 +236,7 @@
                                     },
                                     {
                                         "text": "The staff showed professionalism in their job",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -234,7 +253,7 @@
                                     },
                                     {
                                         "text": "The staff was attentive to their customers",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -259,7 +278,7 @@
                                 "options": [
                                     {
                                         "text": "The staff was accomodating",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -276,7 +295,7 @@
                                     },
                                     {
                                         "text": "The staff showed good responses to customer requests",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -293,7 +312,7 @@
                                     },
                                     {
                                         "text": "The staff was attentive to their customers",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -318,7 +337,7 @@
                                 "options": [
                                     {
                                         "text": "The staff was disrespectufl",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -335,7 +354,7 @@
                                     },
                                     {
                                         "text": "The staff was being unprofessional with their job",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -352,7 +371,7 @@
                                     },
                                     {
                                         "text": "The staff was not attentive to their customers",
-                                        "questions": {
+                                        "question": {
                                             "text": "The staff I'm referring to is...",
                                             "options": [
                                                 {
@@ -435,3 +454,31 @@
         ]
     }
 }
+
+var createResponseJSON = {
+    "survey_id": "60cd961ed1f2a9a53aab8bc5",
+    "email": "johndoe@sample.com",
+    "survey": [
+        {
+            "question": "Leave a comment about...",
+            "option": "Food",
+            "option_id": "60cd9486ac0880a501233492"
+        },
+        {
+            "question": "The food was...",
+            "option": "Good",
+            "option_id": "60cd9486ac0880a5012334a0"
+        },
+        {
+            "question": "I liked the food because...",
+            "option": "It was somewhat delicious",
+            "option_id": "60cd9486ac0880a5012334a0"
+        },
+        {
+            "question": "The particular food I'm referring to is...",
+            "option": "Chicken",
+            "option_id": "60cd9486ac0880a5012334a4"
+        }
+    ]
+}
+

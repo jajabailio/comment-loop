@@ -13,5 +13,14 @@ module.exports = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    mainId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'surveys'
+    },
+    version_number: {
+        type: Number,
+        default: 1,
+        required: true
     }
 }, { timestamps: true })

@@ -16,5 +16,9 @@ module.exports = new mongoose.Schema({
     },
     contact_number: {
         type: String
+    },
+    survey: {
+        type: [Object],
+        required: true
     }
 }, { timestamps: true })

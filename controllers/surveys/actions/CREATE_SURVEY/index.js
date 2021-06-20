@@ -1,5 +1,6 @@
 
 const { Survey } = require('../../../../models');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.createSurvey = async (req, res) => {
 
@@ -9,21 +10,15 @@ exports.createSurvey = async (req, res) => {
     const { error } = Survey.createValidateBody(Object.assign({}, { ...req.body, options, text }));
     if (error) return res.status(400).json(error.details[0].message);
 
-    try {
-        console.log('before valid_opts')
-        validated_opts = Survey.validateOptions(options);
-        console.log(validated_opts)
-        console.log('after valid_opts')
-    } catch (err) {
-
-        return res.status(400).json(err.replace(/Error: /g, ''));
-    }
+    try { validated_opts = Survey.validateOptions(options); }
+    catch (err) { return res.status(400).json(err.replace(/Error: /g, '')); }
 
     try {
 
-        // const newSurvey = await Survey.create(Object.assign(req.body, { options: validate_opts }));
-        // res.json(newSurvey)
-        res.json(validated_opts);
+        const _id = ObjectId();
+        Object.assign(req.body.main_question, { _id });
+        const newSurvey = await Survey.create(Object.assign(req.body, { _id, mainId: _id, options: validate_opts }));
+        res.json(newSurvey);
 
     } catch (err) {
         console.error(err);
