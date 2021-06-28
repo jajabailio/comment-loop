@@ -6,10 +6,6 @@ module.exports = new mongoose.Schema({
         type: String,
         required: true
     },
-    main_question: {
-        type: Object,
-        required: true
-    },
     isActive: {
         type: Boolean,
         default: true
@@ -21,6 +17,14 @@ module.exports = new mongoose.Schema({
     version_number: {
         type: Number,
         default: 1,
+        required: true
+    },
+    survey: {
+        type: Object,
+        required: true
+    },
+    questions: {
+        type: [Object],
         required: true
     }
 }, { timestamps: true })

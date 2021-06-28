@@ -10,7 +10,7 @@ classMethods.createValidate = function (body) {
         survey_id: Joi.objectId().required(),
         email: Joi.string().email().allow(''),
         contact_number: Joi.string().allow(''),
-        survey: Joi.array().required()
+        answers: Joi.array().required()
     });
     return schema.validate(body);
 }

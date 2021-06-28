@@ -17,7 +17,7 @@ module.exports = new mongoose.Schema({
     contact_number: {
         type: String
     },
-    survey: {
+    answers: {
         type: [Object],
         required: true
     }

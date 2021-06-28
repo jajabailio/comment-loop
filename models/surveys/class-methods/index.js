@@ -7,83 +7,76 @@ const classMethods = {};
 classMethods.createValidateBody = function (body) {
     const schema = Joi.object().keys({
         name: Joi.string().min(4).required(),
-        main_question: Joi.object().required(),
-        text: Joi.string().min(4).required(),
-        options: Joi.array().min(1).required()
+        question: Joi.object().required(),
+        // text: Joi.string().min(4).required(),
+        // options: Joi.array().min(1).required()
     });
     return schema.validate(body);
 }
 
-classMethods.validateOptions = function (options) {
-    let newOptions = [];
-    let orderNumber = 1;
+classMethods.validateOptions = function (question) {
+    let validatedQuestion;
 
-    if (options.length < 1) throw new Error('Survey requires at least one or two options');
+    try {
+        validatedQuestion = validateQuestions(question, null, [], 0);
+    } catch(err) {
+        throw new Error(err).toString();
+    }
 
-    options.forEach(option => {
-        if (option.text == '' || !option.text)
-            throw new Error('There are empty options in a question. Make sure all options are valid').toString();
+    let sortQuestions = validatedQuestion.questionArray;
+    sortQuestions.sort((a, b) => (a.order > b.order) ? 1 : -1);
 
-        if (!option._id) {
-            const id = ObjectId();
-            option._id = id;
-        } else {
-            option._id = ObjectId(option._id);
-        }
-
-        option.order_number = orderNumber++;
-        newOptions.push(option);
-
-        if (option.question) {
-            if (option.question.text == '' || !option.question.text)
-                throw new Error('There are empty questions in the survey. Make sure all questions are valid').toString();
-
-            try {
-                let questionOptions = validateQuestions(option.question);
-                option.question.options = questionOptions;
-            } catch (err) {
-                throw new Error(err).toString();
-            }
-        }
-    });
-
-    return newOptions;
+    return { survey: validatedQuestion.question, questions: sortQuestions };
 }
 
-function validateQuestions(question) {
-    let newOptions = [];
+function validateQuestions(question, option_id, questionArray, questionOrder) {
+
+    if(option_id) question.option_id = option_id;
+
+    question.order = ++questionOrder;
+
+    let newOption = [];
     let orderNumber = 1;
 
-    if (question.options.length < 1) throw new Error(`Question "${question.text}" requires at least one or two options`)
+    const questionId = ObjectId();
+    question._id = questionId;
+
+    if(question.text == '' || !question.text) throw new Error('Questions must have a valid text');
+
+    if(question.options.length < 1) throw new Error(`Question "${question.text}" requires at least one or two options`);
 
     question.options.forEach(option => {
-        if (option.text == '' || !option.text)
-            throw new Error('There are empty options in a question. Make sure all optinos are valid');
+        if(option.text == '' || !option.text) 
+            throw new Error('There are empty options in a question. Make sure all options are valid');
 
-        if (!option._id) {
+        if(!option._id) {
             const id = ObjectId();
             option._id = id;
+            option.question_id = questionId;
         } else {
             option._id = ObjectId(option._id);
         }
 
         option.order_number = orderNumber++;
 
-        if (option.question) {
-            if (option.question.text == '' || !option.question.text)
-                throw new Error('There are empty questions in the survey. Make sure all questions are valid');
-
+        if(option.question) {
             try {
-                let formatOptions = validateQuestions(option.question);
-                option.question.options = formatOptions;
-            } catch (err) {
+                let newOptions = validateQuestions(option.question, option._id, questionArray, questionOrder);
+                option.question = newOptions.question;
+                questionArray = newOptions.questionArray;
+                questionOrder = newOptions.questionOrder;
+            } catch(err) {
                 throw new Error(err);
             }
         }
-        newOptions.push(option);
+
+        newOption.push(option);
     });
 
-    return newOptions;
+    question.options = newOption;
+    questionArray.push(question)
+
+    return { question, questionArray, questionOrder};
 }
 
 module.exports = classMethods;

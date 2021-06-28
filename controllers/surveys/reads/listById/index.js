@@ -7,7 +7,7 @@ exports.fetchById = async (req, res) => {
     try {
 
         const mainId = ObjectId(req.params.id);
-        const getSurvey = await Survey.findOne({ mainId: mainId, isActive: true });
+        const getSurvey = await Survey.findOne({ isActive: true });
         if (!getSurvey) return res.status(400).json('Question not found');
 
         res.json(getSurvey);
